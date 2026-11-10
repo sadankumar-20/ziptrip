@@ -7,7 +7,7 @@ import { cn } from '../lib/cn';
 import { LOGO } from '../lib/images';
 import { useSettings } from '../lib/hooks';
 import { IS_DEMO, ADMIN_ENABLED } from '../lib/config';
-import { ButtonLink, ButtonA, buttonClass } from './ui';
+import { ButtonLink, ButtonA, buttonClass, Wave } from './ui';
 
 export const NAV = [
   { to: '/', label: 'Home' },
@@ -33,7 +33,6 @@ export const instaUrl = (handle: string) => `https://www.instagram.com/${handle}
 
 function Header() {
   const { pathname } = useLocation();
-  const overHero = pathname === '/';
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -43,14 +42,14 @@ function Header() {
     return () => window.removeEventListener('scroll', on);
   }, []);
   useEffect(() => setOpen(false), [pathname]);
-  const transparent = overHero && !scrolled && !open;
+  const transparent = false;
 
   return (
     <>
       <header
         className={cn(
           'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,color] duration-300',
-          transparent ? 'bg-gradient-to-b from-ink/50 to-transparent text-cream' : 'bg-cream/95 text-ink shadow-[0_1px_0_var(--color-line)] backdrop-blur-sm',
+          transparent ? 'bg-gradient-to-b from-ink/50 to-transparent text-cream' : scrolled ? 'bg-cream/95 text-ink shadow-[0_1px_0_var(--color-line)] backdrop-blur-sm' : 'bg-sky text-ink',
         )}
         style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
@@ -181,6 +180,14 @@ function Footer() {
 function StickyContact() {
   const s = useSettings();
   const { pathname } = useLocation();
+  // The desktop button waits until the visitor scrolls, so it never covers the hero's booking buttons.
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const on = () => setShown(window.scrollY > 700);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
   if (pathname.startsWith('/trips/')) return null;
   const wa = waLink(s.whatsappNumber, 'Hi JoinZipTrip! I have a question about your trips.');
   return (
@@ -195,7 +202,7 @@ function StickyContact() {
         href={wa}
         target="_blank"
         rel="noopener noreferrer"
-        className="group fixed bottom-6 right-6 z-40 hidden items-center gap-2 rounded-full bg-forest py-3 pl-3 pr-4 font-semibold text-cream shadow-[0_10px_30px_-10px_rgba(10,42,29,.6)] transition-transform hover:-translate-y-0.5 md:inline-flex"
+        className={cn('group fixed bottom-6 right-6 z-40 hidden items-center gap-2 rounded-full bg-forest py-3 pl-3 pr-4 font-semibold text-cream shadow-[0_10px_30px_-10px_rgba(10,42,29,.6)] transition-all duration-300 hover:-translate-y-0.5 md:inline-flex', shown ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0')}
         style={{ right: 'max(1.5rem, env(safe-area-inset-right, 0px))' }}
       >
         <span className="grid size-9 place-items-center rounded-full bg-orange text-ink"><MessageCircle size={18} /></span>
@@ -233,13 +240,12 @@ export function ScrollToTop() {
 }
 
 export function SiteLayout() {
-  const { pathname } = useLocation();
   return (
     <div className="flex min-h-screen flex-col">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-orange focus:px-4 focus:py-2 focus:font-semibold">Skip to content</a>
       <Header />
-      <main id="main" className={cn('flex-1 pb-20 md:pb-0', pathname !== '/' && 'pt-[calc(4.5rem+env(safe-area-inset-top,0px))]')}>
-        {pathname !== '/' && <DemoRibbon />}
+      <main id="main" className="flex-1 pb-20 pt-[calc(4.5rem+env(safe-area-inset-top,0px))] md:pb-0">
+        <DemoRibbon />
         <Outlet />
       </main>
       <Footer />
@@ -248,17 +254,19 @@ export function SiteLayout() {
   );
 }
 
-export function PageHero({ title, intro, children, image, tone = 'cream' }: { title: ReactNode; intro?: ReactNode; children?: ReactNode; image?: string; tone?: 'cream' | 'forest' }) {
+export function PageHero({ title, intro, children, note }: { title: ReactNode; intro?: ReactNode; children?: ReactNode; image?: string; tone?: 'cream' | 'forest'; note?: string }) {
   return (
-    <section className={cn('relative overflow-hidden', tone === 'forest' ? 'bg-forest text-cream' : 'bg-cream text-ink')}>
-      {image && <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" aria-hidden />}
+    <section className="relative overflow-hidden bg-sky text-ink">
+      <div aria-hidden className="absolute -right-20 -top-28 size-80 rounded-full bg-sun/45 blur-2xl" />
       <div className="gutter relative">
-        <div className="shell py-14 md:py-20">
-          <h1 className="max-w-4xl font-display text-[clamp(2.6rem,7vw,5.4rem)] font-extrabold leading-[0.98] tracking-[-0.02em]">{title}</h1>
-          {intro && <p className={cn('mt-5 max-w-2xl text-lg md:text-xl', tone === 'forest' ? 'text-cream/80' : 'text-muted')}>{intro}</p>}
+        <div className="shell py-12 md:py-16">
+          {note && <p className="mb-2 -rotate-2 font-hand text-[1.7rem] leading-tight text-ember">{note}</p>}
+          <h1 className="max-w-4xl font-display text-[clamp(2.4rem,6.4vw,4.8rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-forest">{title}</h1>
+          {intro && <p className="mt-4 max-w-2xl text-lg text-ink/75 md:text-xl">{intro}</p>}
           {children}
         </div>
       </div>
+      <Wave from="bg-sky" to="text-cream" />
     </section>
   );
 }

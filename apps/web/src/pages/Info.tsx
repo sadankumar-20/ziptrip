@@ -215,7 +215,7 @@ export function Contact() {
           </div>
           <div className="flex flex-col gap-4">
             <a href={instaUrl(s.instagramHandle)} target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden rounded-[1.6rem] bg-ink p-7 text-cream">
-              <img src={img('asset:grassland-trail')} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-105" />
+              <img src={img('asset:trekker')} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-105" />
               <div className="relative">
                 <Camera size={30} className="text-orange" aria-hidden />
                 <p className="mt-4 font-display text-3xl font-bold">Follow @{s.instagramHandle}</p>

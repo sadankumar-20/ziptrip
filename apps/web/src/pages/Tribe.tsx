@@ -2,9 +2,9 @@ import { MessageCircle, Camera, UserRound, UsersRound, HeartHandshake } from 'lu
 import { formatDate, waLink } from '@jzt/shared';
 import { useAlbums, useReviews, useSettings, useTrips } from '../lib/hooks';
 import { Seo } from '../lib/seo';
-import { CONTOURS, img } from '../lib/images';
+import { CONTOURS } from '../lib/images';
 import { instaUrl } from '../components/layout';
-import { ButtonA, ButtonLink, SampleTag, Skeleton } from '../components/ui';
+import { ButtonA, ButtonLink, SampleTag, Skeleton, Polaroid, HandNote, Wave } from '../components/ui';
 import { MemoryWall, ReviewCard } from '../components/people';
 import { featuredOf } from './Home';
 
@@ -30,15 +30,22 @@ export default function Tribe() {
   return (
     <>
       <Seo title="Our tribe" path="/tribe" description="Strangers on day one. Travel buddies for life. How JoinZipTrip brings solo travellers and friends together on the trail." />
-      <section className="relative isolate overflow-hidden bg-forest-deep text-cream">
-        <img src={img('asset:tribe-sunrise')} alt="A group of trekkers standing together on a rock at sunrise" className="absolute inset-0 -z-10 h-full w-full object-cover" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-forest-deep via-forest-deep/30 to-forest-deep/10" />
-        <div className="gutter">
-          <div className="shell flex min-h-[min(40rem,80svh)] flex-col justify-end pb-14 pt-24">
-            <h1 className="max-w-5xl font-display text-[clamp(2.8rem,8vw,6.8rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.02em]">Strangers on day one. Travel buddies for life.</h1>
-            <p className="mt-6 max-w-2xl text-lg text-cream/85 md:text-xl">JoinZipTrip is built for people who want to go, whether or not their friends can make it. Here’s who travels with us and how a group of strangers turns into a crew in a single day.</p>
+      <section className="relative overflow-hidden bg-peach">
+        <div aria-hidden className="absolute -left-24 -top-24 size-96 rounded-full bg-sun/50 blur-2xl" />
+        <div className="gutter relative">
+          <div className="shell grid items-center gap-10 py-12 md:py-16 lg:grid-cols-[1.3fr_1fr]">
+            <div>
+              <HandNote className="mb-2">Our tribe</HandNote>
+              <h1 className="font-display text-[clamp(2.4rem,6.6vw,5.4rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.03em] text-forest">Strangers on day one. Travel buddies for life.</h1>
+              <p className="mt-5 max-w-2xl text-lg text-ink/75 md:text-xl">JoinZipTrip is built for people who want to go, whether or not their friends can make it. Here’s who travels with us and how strangers turn into a crew in a single day.</p>
+            </div>
+            <div className="relative mx-auto h-72 w-full max-w-sm sm:h-80">
+              <div className="absolute left-0 top-4 w-[55%]"><Polaroid src="asset:trekker" alt="A trekker looking out over misty hills" caption="day one" rotate={-6} eager /></div>
+              <div className="absolute right-0 top-0 w-[55%]"><Polaroid src="asset:sunrise-clouds" alt="Sunrise over the clouds" caption="crew for life" rotate={6} eager /></div>
+            </div>
           </div>
         </div>
+        <Wave from="bg-peach" to="text-cream" />
       </section>
 
       <section className="bg-cream">

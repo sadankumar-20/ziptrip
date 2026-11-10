@@ -138,14 +138,12 @@ export const THADIYANDAMOL: Trip = {
   isFeatured: true,
   isPublished: true,
   isDemo: false,
-  coverImage: { url: 'asset:hero-sunrise', alt: 'Layered ridges of the Western Ghats at sunrise with a group of trekkers on the near ridge', kind: 'image' },
+  coverImage: { url: 'asset:sunrise-clouds', alt: 'Sunrise over a sea of clouds and forested hills in the Western Ghats', kind: 'image' },
   gallery: [
-    { url: 'asset:poster', alt: 'Official JoinZipTrip poster for the Thadiyandamol one-day trek on 22 November', kind: 'image', caption: 'Official trip poster' },
     { url: 'asset:trekker', alt: 'A trekker in an orange jacket looking out over misty green hills', kind: 'image', caption: 'From the trip poster' },
-    { url: 'asset:summit-clouds', alt: 'Grassy summit ridge above a sea of clouds', kind: 'image', caption: 'Stand-in image' },
-    { url: 'asset:shola-forest', alt: 'Shola forest in morning mist', kind: 'image', caption: 'Stand-in image' },
-    { url: 'asset:grassland-trail', alt: 'A line of trekkers on a golden grassland trail', kind: 'image', caption: 'Stand-in image' },
-    { url: 'asset:coorg-hills', alt: 'Rolling Coorg hills with estate rows and tall shade trees', kind: 'image', caption: 'Stand-in image' },
+    { url: 'asset:sunrise-clouds', alt: 'Sunrise over a sea of clouds and forested hills', kind: 'image', caption: 'From the trip poster' },
+    { url: 'asset:poster', alt: 'Official JoinZipTrip poster for the Thadiyandamol one-day trek on 22 November', kind: 'image', caption: 'Official trip poster' },
+    { url: 'asset:panorama', alt: 'Panorama of misty ridges at sunrise', kind: 'image', caption: 'From the trip poster' },
   ],
   itinerary: [
     { time: '4:00 AM', title: 'Pickup in Mysuru', detail: 'Meet near the Mysuru Railway Station front gate. Your trip leader checks everyone in and the group sets off.' },

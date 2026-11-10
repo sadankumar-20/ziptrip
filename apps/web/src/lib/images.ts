@@ -11,6 +11,8 @@ import predawnRidges from '../assets/img/predawn-ridges.webp';
 import tribeSunrise from '../assets/img/tribe-sunrise.webp';
 import poster from '../assets/img/poster.webp';
 import trekker from '../assets/img/trekker.webp';
+import sunriseClouds from '../assets/img/sunrise-clouds.webp';
+import panorama from '../assets/img/panorama.webp';
 import logo from '../assets/img/logo-mascot.webp';
 import contours from '../assets/img/contours.svg';
 
@@ -26,6 +28,8 @@ export const ASSETS: Record<string, string> = {
   'tribe-sunrise': tribeSunrise,
   poster,
   trekker,
+  'sunrise-clouds': sunriseClouds,
+  panorama,
 };
 
 /** Natural aspect ratios (w/h) so images reserve space before they load. */
@@ -35,6 +39,8 @@ export const ASSET_RATIO: Record<string, number> = {
   waterfall: 1000 / 1286,
   poster: 900 / 1184,
   trekker: 388 / 460,
+  'sunrise-clouds': 390 / 470,
+  panorama: 1320 / 210,
 };
 
 export function img(url: string | null | undefined): string {

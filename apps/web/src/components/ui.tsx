@@ -212,10 +212,47 @@ export function SectionHeading({ title, intro, action, className, light }: { tit
   return (
     <div className={cn('flex flex-col gap-4 md:flex-row md:items-end md:justify-between', className)}>
       <div className="max-w-2xl">
-        <h2 className={cn('font-display text-[clamp(2rem,4.4vw,3.4rem)] font-bold tracking-[-0.01em]', light ? 'text-cream' : 'text-ink')}>{title}</h2>
+        <h2 className={cn('font-display text-[clamp(2rem,4.4vw,3.4rem)] font-extrabold tracking-[-0.03em]', light ? 'text-cream' : 'text-forest')}>{title}</h2>
         {intro && <p className={cn('mt-3 text-lg', light ? 'text-cream/80' : 'text-muted')}>{intro}</p>}
       </div>
       {action}
     </div>
   );
+}
+
+// ---------- Postcard pieces ----------
+/** A photo in a white polaroid frame with a handwritten caption. */
+export function Polaroid({ src, alt, caption, className, rotate = 0, ratio = 4 / 5, eager }: { src: string; alt: string; caption?: string; className?: string; rotate?: number; ratio?: number; eager?: boolean }) {
+  return (
+    <figure className={cn('polaroid relative', className)} style={{ transform: `rotate(${rotate}deg)` }}>
+      <Img src={src} alt={alt} ratio={ratio} eager={eager} className="rounded-[0.3rem]" />
+      {caption && <figcaption className="absolute inset-x-3 bottom-2 truncate text-center font-hand text-[1.35rem] leading-tight text-ink/80">{caption}</figcaption>}
+    </figure>
+  );
+}
+
+/** A postage stamp with perforated edges. */
+export function PostageStamp({ children, className, rotate = 0, tone = 'sun' }: { children: ReactNode; className?: string; rotate?: number; tone?: 'sun' | 'orange' | 'forest' | 'paper' }) {
+  const bg = { sun: 'bg-sun text-ink', orange: 'bg-orange text-ink', forest: 'bg-forest text-cream', paper: 'bg-paper text-forest' }[tone];
+  return (
+    <div className={cn('stamp drop-shadow-[0_8px_14px_rgba(23,34,28,.18)]', bg, className)} style={{ transform: `rotate(${rotate}deg)` }}>
+      <div className={cn('flex flex-col items-center justify-center rounded-sm border-2 border-dashed px-3 py-2 text-center', tone === 'forest' ? 'border-cream/40' : 'border-ink/25')}>{children}</div>
+    </div>
+  );
+}
+
+/** Soft wave between two sections. `from` is the section above, `to` the one below. */
+export function Wave({ from, to, flip }: { from: string; to: string; flip?: boolean }) {
+  return (
+    <div aria-hidden className={cn(from, to, 'leading-[0]')}>
+      <svg viewBox="0 0 1440 56" preserveAspectRatio="none" className={cn('block h-7 w-full md:h-12', flip && '-scale-y-100')}>
+        <path d="M0 28 C 180 56, 360 0, 540 24 S 900 56, 1080 26 S 1320 4, 1440 22 V56 H0 Z" fill="currentColor" />
+      </svg>
+    </div>
+  );
+}
+
+/** Handwritten note. */
+export function HandNote({ children, className, rotate = -2 }: { children: ReactNode; className?: string; rotate?: number }) {
+  return <p className={cn('font-hand text-[1.6rem] leading-tight text-ember', className)} style={{ transform: `rotate(${rotate}deg)` }}>{children}</p>;
 }

@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom';
 import {
   CalendarDays, Clock, MapPin, Bus, Coffee, UtensilsCrossed, Soup, Cookie, FileCheck2, IndianRupee, Footprints,
-  HeartPulse, BedDouble, Tent, Flame, Camera, Sparkles, Mountain, type LucideIcon,
+  HeartPulse, BedDouble, Tent, Flame, Camera, Sparkles, type LucideIcon,
 } from 'lucide-react';
 import {
-  CATEGORY_LABEL, formatDate, formatINR, departureInstant, dayOfMonth, monthShort, weekdayLong, isBookable,
+  CATEGORY_LABEL, formatDate, formatDateLong, formatINR, departureInstant, dayOfMonth, monthShort, isBookable,
   type TripView, type InclusionKey, type ElevationPoint, type ItineraryStep, type Inclusion,
 } from '@jzt/shared';
 import { cn } from '../lib/cn';
 import { useCountdown } from '../lib/useCountdown';
-import { Img, StatusPill, SampleTag, buttonClass } from './ui';
+import { Img, StatusPill, SampleTag, PostageStamp, HandNote, buttonClass } from './ui';
 
 // ---------- Seats ----------
 export function SeatMeter({ trip, compact, light }: { trip: TripView; compact?: boolean; light?: boolean }) {
@@ -42,8 +42,8 @@ export function Countdown({ trip, light, className }: { trip: TripView; light?: 
   return (
     <div className={cn('flex items-stretch gap-1.5', className)} role="timer" aria-label={`${c.days} days and ${c.hours} hours until departure`}>
       {parts.map(([n, label]) => (
-        <div key={label} className={cn('flex min-w-[3.6rem] flex-col items-center rounded-xl px-2 py-1.5', light ? 'bg-cream/10' : 'bg-forest/[.07]')}>
-          <span className="font-display text-2xl font-bold leading-none tabular">{String(n).padStart(2, '0')}</span>
+        <div key={label} className={cn('flex min-w-[3.6rem] flex-col items-center rounded-xl px-2 py-1.5', light ? 'bg-cream/10' : 'bg-sky ring-1 ring-sky-deep')}>
+          <span className="font-display text-2xl font-extrabold leading-none tabular">{String(n).padStart(2, '0')}</span>
           <span className={cn('mt-1 text-[0.7rem] font-medium', light ? 'text-cream/70' : 'text-muted')}>{label}</span>
         </div>
       ))}
@@ -54,96 +54,89 @@ export function Countdown({ trip, light, className }: { trip: TripView; light?: 
 // ---------- Trip card ----------
 export function TripCard({ trip, className }: { trip: TripView; className?: string }) {
   return (
-    <article className={cn('group relative flex flex-col overflow-hidden rounded-[1.4rem] bg-white ring-1 ring-line transition-shadow duration-300 hover:shadow-[0_24px_50px_-28px_rgba(16,61,43,.45)]', className)}>
+    <article className={cn('group relative flex flex-col rounded-[1.6rem] bg-white p-3 shadow-[0_1px_0_rgba(23,34,28,.05),0_20px_40px_-28px_rgba(23,34,28,.45)] ring-1 ring-line/70 transition-transform duration-300 hover:-translate-y-1', className)}>
       <div className="relative">
-        <Img src={trip.coverImage.url} alt={trip.coverImage.alt} ratio={4 / 3} imgClassName="transition-transform duration-700 group-hover:scale-[1.04]" />
-        <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
-          <StatusPill status={trip.status} />
-          <span className="rounded-full bg-ink/60 px-2.5 py-1 text-xs font-semibold text-cream backdrop-blur-sm">{CATEGORY_LABEL[trip.category]}</span>
-        </div>
+        <Img src={trip.coverImage.url} alt={trip.coverImage.alt} ratio={4 / 3} className="rounded-[1.1rem]" imgClassName="transition-transform duration-700 group-hover:scale-[1.04]" />
+        <div className="absolute left-3 top-3 -rotate-3"><StatusPill status={trip.status} className="shadow-md" /></div>
+        <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-bold text-forest">{CATEGORY_LABEL[trip.category]}</span>
         {trip.departureDate && (
-          <div className="absolute bottom-3 left-3 flex flex-col items-center rounded-xl bg-cream px-3 py-1.5 text-forest shadow">
-            <span className="font-display text-2xl font-bold leading-none tabular">{dayOfMonth(trip.departureDate)}</span>
-            <span className="text-[0.7rem] font-semibold">{monthShort(trip.departureDate)}</span>
+          <div className="absolute -bottom-5 right-4 rotate-3">
+            <PostageStamp tone="paper" className="[--r:4px]">
+              <span className="font-display text-2xl font-extrabold leading-none tabular">{dayOfMonth(trip.departureDate)}</span>
+              <span className="text-[0.7rem] font-bold uppercase tracking-wider">{monthShort(trip.departureDate)}</span>
+            </PostageStamp>
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-4 p-5">
-        <div>
-          <div className="flex items-center gap-2">
-            <h3 className="font-display text-[1.6rem] font-bold leading-tight">
-              <Link to={`/trips/${trip.slug}`} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">{trip.title}</Link>
-            </h3>
-            {trip.isDemo && <SampleTag className="text-ember" />}
-          </div>
-          <p className="mt-1 text-muted">{trip.destination}{trip.region ? `, ${trip.region}` : ''}</p>
+      <div className="flex flex-1 flex-col gap-4 px-2 pb-2 pt-5">
+        <div className="pr-16">
+          <h3 className="font-display text-[1.55rem] font-bold leading-tight text-forest">
+            <Link to={`/trips/${trip.slug}`} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">{trip.title}</Link>
+          </h3>
+          <p className="mt-1 text-sm text-muted">{trip.destination}{trip.region ? `, ${trip.region}` : ''}</p>
+          {trip.isDemo && <SampleTag className="mt-2 text-ember" />}
         </div>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-2.5 gap-y-1.5 text-[0.93rem]">
-          <dt className="text-muted"><CalendarDays size={16} aria-label="Date" /></dt>
-          <dd>{formatDate(trip.departureDate)}</dd>
-          <dt className="text-muted"><Clock size={16} aria-label="Duration" /></dt>
-          <dd>{trip.durationLabel}</dd>
-          <dt className="text-muted"><MapPin size={16} aria-label="Pickup" /></dt>
-          <dd className="min-w-0">{trip.pickupTime ? `${trip.pickupTime}, ` : ''}{trip.pickupCity || trip.pickupPoint}</dd>
-        </dl>
+        <ul className="flex flex-wrap gap-1.5 text-[0.82rem] font-semibold">
+          <li className="inline-flex items-center gap-1 rounded-full bg-sky px-2.5 py-1"><CalendarDays size={14} aria-hidden /> {formatDate(trip.departureDate, { year: false })}</li>
+          <li className="inline-flex items-center gap-1 rounded-full bg-sage px-2.5 py-1"><Clock size={14} aria-hidden /> {trip.durationLabel}</li>
+          <li className="inline-flex items-center gap-1 rounded-full bg-peach px-2.5 py-1"><MapPin size={14} aria-hidden /> {trip.pickupCity || trip.pickupPoint}</li>
+        </ul>
         <SeatMeter trip={trip} compact />
-        <div className="mt-auto flex items-end justify-between gap-3 border-t border-line pt-4">
+        <div className="mt-auto flex items-end justify-between gap-3 border-t border-dashed border-line pt-4">
           <div>
-            <p className="text-xs text-muted">{trip.isDemo ? 'Sample price' : 'Price per person'}</p>
-            <p className="font-display text-[1.7rem] font-bold leading-none tabular">{trip.priceInr != null ? formatINR(trip.priceInr) : 'TBA'}</p>
+            <p className="text-xs font-semibold text-muted">{trip.isDemo ? 'Sample price' : 'Per person'}</p>
+            <p className="font-display text-[1.7rem] font-extrabold leading-none text-ink tabular">{trip.priceInr != null ? formatINR(trip.priceInr) : 'TBA'}</p>
           </div>
-          <span className={buttonClass('outline', 'sm', 'relative group-hover:border-ink')} aria-hidden>View details</span>
+          <span className={buttonClass('primary', 'sm', 'relative')} aria-hidden>View details</span>
         </div>
       </div>
     </article>
   );
 }
 
-// ---------- Featured ticket (wide) ----------
+// ---------- Featured postcard ----------
 export function FeaturedTrip({ trip }: { trip: TripView }) {
   const bookable = isBookable(trip);
   return (
-    <article className="group relative grid overflow-hidden rounded-[1.6rem] bg-forest text-cream md:grid-cols-[1.15fr_1fr_auto]">
-      <div className="relative min-h-64">
-        <div className="absolute inset-0"><Img src={trip.coverImage.url} alt={trip.coverImage.alt} className="h-full" imgClassName="transition-transform duration-700 group-hover:scale-[1.03]" /></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-forest/70 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-forest/40" />
-        <span className="absolute left-4 top-4 rounded-full bg-cream px-3 py-1 text-xs font-bold text-forest">Our first official trip</span>
-      </div>
-      <div className="relative flex flex-col gap-5 p-6 md:p-8">
-        <div className="flex flex-wrap items-center gap-2">
-          <StatusPill status={trip.status} />
-          <span className="text-sm text-cream/70">{CATEGORY_LABEL[trip.category]} · {trip.durationLabel}</span>
+    <article className="airmail relative overflow-hidden rounded-[1.8rem] shadow-[0_30px_60px_-40px_rgba(23,34,28,.6)]">
+      <div className="grid gap-0 md:grid-cols-[1fr_1.15fr]">
+        <div className="relative p-4 pb-0 md:p-6 md:pr-0">
+          <Img src={trip.coverImage.url} alt={trip.coverImage.alt} className="h-64 rounded-[1.2rem] md:h-full md:min-h-[24rem]" eager />
+          <HandNote className="absolute bottom-4 left-8 rounded-lg bg-white/90 px-3 py-1 text-[1.4rem] md:bottom-8 md:left-10">Wish you were here!</HandNote>
         </div>
-        <div>
-          <h3 className="font-display text-[clamp(2.2rem,4vw,3.2rem)] font-extrabold leading-[0.95]">
-            <Link to={`/trips/${trip.slug}`} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none md:after:right-[-12rem]">{trip.title}</Link>
-          </h3>
-          <p className="mt-3 max-w-md text-cream/80">{trip.summary}</p>
-        </div>
-        <ul className="grid gap-2 text-[0.95rem]">
-          {trip.altitudeM && <li className="flex items-center gap-2"><Mountain size={17} className="text-orange" aria-hidden /> {trip.altitudeM.toLocaleString('en-IN')} m summit</li>}
-          <li className="flex items-center gap-2"><MapPin size={17} className="text-orange" aria-hidden /> Pickup {trip.pickupTime}, {trip.pickupPoint.replace(/^Near /, 'near ')}</li>
-          <li className="flex items-center gap-2"><IndianRupee size={17} className="text-orange" aria-hidden /> {trip.priceInr != null ? formatINR(trip.priceInr) : 'TBA'} per person, all inclusive</li>
-        </ul>
-        <div className="relative z-10 mt-auto flex flex-wrap gap-2.5">
-          {bookable && <Link to={`/trips/${trip.slug}/book`} className={buttonClass('primary', 'md')}>Book your seat</Link>}
-          <Link to={`/trips/${trip.slug}`} className={buttonClass('outline-light', 'md')}>View details</Link>
-        </div>
-      </div>
-      {trip.departureDate && (
-        <div className="relative flex items-center justify-between gap-4 border-t border-dashed border-cream/30 bg-cream px-6 py-5 text-forest md:w-44 md:flex-col md:justify-center md:border-l md:border-t-0 md:px-4">
-          <span className="absolute -left-3 top-1/2 hidden size-6 -translate-y-1/2 rounded-full bg-paper md:block" aria-hidden />
-          <div className="md:text-center">
-            <p className="text-sm font-semibold">{weekdayLong(trip.departureDate)}</p>
-            <p className="font-display text-6xl font-extrabold leading-none tabular">{dayOfMonth(trip.departureDate)}</p>
-            <p className="font-display text-xl font-bold">{monthShort(trip.departureDate)} {trip.departureDate.slice(0, 4)}</p>
+        <div className="relative flex flex-col gap-5 p-6 md:p-8">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-2">
+              <span className="self-start rounded-full bg-forest px-3 py-1 text-xs font-bold text-cream">Our first official trip</span>
+              <div className="flex flex-wrap items-center gap-2"><StatusPill status={trip.status} /><span className="text-sm font-semibold text-muted">{CATEGORY_LABEL[trip.category]} · {trip.durationLabel}</span></div>
+            </div>
+            <PostageStamp rotate={4} className="shrink-0">
+              <span className="text-[0.65rem] font-bold uppercase tracking-wider">Per person</span>
+              <span className="font-display text-2xl font-extrabold leading-none tabular">{trip.priceInr != null ? formatINR(trip.priceInr) : 'TBA'}</span>
+            </PostageStamp>
           </div>
-          <div className="md:mt-4 md:text-center">
-            <p className="text-xs text-muted">Pickup</p>
-            <p className="font-semibold tabular">{trip.pickupTime}</p>
+          <div>
+            <h3 className="font-display text-[clamp(2.2rem,4vw,3.4rem)] font-extrabold leading-[0.95] text-forest">
+              <Link to={`/trips/${trip.slug}`} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">{trip.title}</Link>
+            </h3>
+            <p className="mt-3 max-w-md text-muted">{trip.summary}</p>
+          </div>
+          <dl className="grid gap-0 text-[0.95rem]">
+            {[
+              ['When', formatDateLong(trip.departureDate)],
+              ['Pickup', `${trip.pickupTime}, ${trip.pickupPoint.replace(/^Near /, 'near ')}`],
+              ...(trip.altitudeM ? [['Summit', `${trip.altitudeM.toLocaleString('en-IN')} m`]] : []),
+            ].map(([k, v]) => (
+              <div key={k} className="grid grid-cols-[5rem_1fr] gap-3 border-b border-dashed border-ink/20 py-2"><dt className="font-hand text-xl leading-6 text-ember">{k}</dt><dd className="font-semibold">{v}</dd></div>
+            ))}
+          </dl>
+          <Countdown trip={trip} />
+          <div className="relative z-10 mt-auto flex flex-wrap gap-2.5">
+            {bookable && <Link to={`/trips/${trip.slug}/book`} className={buttonClass('primary', 'lg')}>Book your seat</Link>}
+            <Link to={`/trips/${trip.slug}`} className={buttonClass('outline', 'lg')}>View details</Link>
           </div>
         </div>
-      )}
+      </div>
     </article>
   );
 }

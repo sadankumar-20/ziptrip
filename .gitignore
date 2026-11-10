@@ -6,4 +6,3 @@ dist-preview
 apps/api/uploads
 *.log
 .DS_Store
-.vercel

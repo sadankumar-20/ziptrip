@@ -146,9 +146,9 @@ export function PassportStampBadge({ stamp, locked, index = 0 }: { stamp: Pick<P
         <defs><path id={id} d="M 80 80 m -56 0 a 56 56 0 1 1 112 0" /></defs>
         <circle cx="80" cy="80" r="74" fill="none" stroke={color} strokeWidth="3" strokeDasharray={stamp.state === 'upcoming' && !locked ? '6 5' : undefined} />
         <circle cx="80" cy="80" r="66" fill="none" stroke={color} strokeWidth="1.2" />
-        <text fontSize="13" fontWeight="700" letterSpacing="2" fill={color} fontFamily="Anek Latin, sans-serif"><textPath href={`#${id}`} startOffset="50%" textAnchor="middle">{label}</textPath></text>
+        <text fontSize="13" fontWeight="700" letterSpacing="2" fill={color} fontFamily="Plus Jakarta Sans, sans-serif"><textPath href={`#${id}`} startOffset="50%" textAnchor="middle">{label}</textPath></text>
         <path d="M44 104 L66 74 L78 88 L92 64 L116 104 Z" fill={color} opacity={locked ? 0.35 : 0.9} />
-        <text x="80" y="124" textAnchor="middle" fontSize="12" fontWeight="700" fill={color} fontFamily="Anek Latin, sans-serif">
+        <text x="80" y="124" textAnchor="middle" fontSize="12" fontWeight="700" fill={color} fontFamily="Plus Jakarta Sans, sans-serif">
           {locked ? 'TO EARN' : stamp.altitudeM ? `${stamp.altitudeM.toLocaleString('en-IN')} M` : stamp.state === 'completed' ? 'DONE' : 'SOON'}
         </text>
       </svg>

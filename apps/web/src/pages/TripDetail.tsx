@@ -3,14 +3,14 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { CalendarDays, Clock, IndianRupee, MapPin, Mountain, Route, Timer, Gauge, HeartPulse, Users, Undo2, Check, X, MessageCircle, ChevronDown, Minus, Plus, ShieldCheck, Backpack, FileText, Ban, Info } from 'lucide-react';
 import {
   CATEGORY_LABEL, DIFFICULTY_LABEL, DIFFICULTY_LEVEL, LEADER_ROLE_LABEL, formatDate, formatDateLong, formatINR, isBookable,
-  computeTotal, tripEnquiryMessage, waLink, isPlaceholder, type TripView, type Leader,
+  computeTotal, tripEnquiryMessage, waLink, isPlaceholder, dayOfMonth, monthShort, type TripView, type Leader,
 } from '@jzt/shared';
 import { useTrip, useLeaders, useSettings } from '../lib/hooks';
 import { Seo } from '../lib/seo';
 import { cn } from '../lib/cn';
 import { img } from '../lib/images';
 import { SITE_URL } from '../lib/config';
-import { Img, Txt, StatusPill, SampleTag, Skeleton, ErrorState, Lightbox, ButtonLink, ButtonA, Button, buttonClass } from '../components/ui';
+import { Img, Txt, StatusPill, SampleTag, Skeleton, ErrorState, Lightbox, ButtonLink, ButtonA, Button, Polaroid, PostageStamp, Wave, buttonClass } from '../components/ui';
 import { SeatMeter, Countdown, ElevationProfile, Itinerary, InclusionGrid } from '../components/trips';
 import { LeaderStats } from '../components/people';
 import NotFound from './NotFound';
@@ -174,45 +174,61 @@ export default function TripDetail() {
       <Seo title={trip.title} path={`/trips/${trip.slug}`} description={trip.summary} image={img(trip.coverImage.url)} jsonLd={jsonLd} noindex={trip.isDemo} />
 
       {/* Hero */}
-      <section className="relative isolate overflow-hidden bg-forest-deep text-cream">
-        <img src={img(trip.coverImage.url)} alt={trip.coverImage.alt} className="absolute inset-0 -z-20 h-full w-full object-cover" fetchPriority="high" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(10,42,29,.25),rgba(10,42,29,.1)_35%,rgba(10,42,29,.88))]" />
-        <div className="gutter">
-          <div className="shell flex min-h-[min(44rem,78svh)] flex-col justify-end gap-6 pb-10 pt-24 md:pb-14">
-            <nav aria-label="Breadcrumb" className="text-sm text-cream/80">
-              <Link to="/trips" className="hover:text-cream">Explore trips</Link> <span aria-hidden>/</span> {CATEGORY_LABEL[trip.category]}
-            </nav>
-            <div className="flex flex-wrap items-center gap-2">
-              <StatusPill status={trip.status} />
-              {trip.isDemo && <SampleTag className="text-cream">Sample trip: replace in admin</SampleTag>}
+      <section className="relative overflow-hidden bg-sky">
+        <div aria-hidden className="absolute -right-24 -top-24 size-96 rounded-full bg-sun/45 blur-2xl" />
+        <div className="gutter relative">
+          <div className="shell grid items-center gap-8 pb-10 pt-6 md:pb-14 md:pt-10 lg:grid-cols-[1.2fr_1fr] lg:gap-10">
+            <div className="flex min-w-0 flex-col gap-5">
+              <nav aria-label="Breadcrumb" className="text-sm font-semibold text-forest/70">
+                <Link to="/trips" className="hover:text-forest">Explore trips</Link> <span aria-hidden>/</span> {CATEGORY_LABEL[trip.category]}
+              </nav>
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusPill status={trip.status} />
+                {trip.isDemo && <SampleTag className="text-ember">Sample trip: replace in admin</SampleTag>}
+              </div>
+              <h1 className="font-display text-[clamp(2.1rem,9vw,4.6rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.03em] text-forest [overflow-wrap:anywhere]">{trip.destination}</h1>
+              <p className="max-w-2xl text-lg text-ink/75 md:text-xl">{trip.summary}</p>
+              <ul className="flex flex-wrap gap-2 text-sm font-semibold">
+                {[
+                  [CalendarDays, formatDateLong(trip.departureDate), 'bg-white'],
+                  [Clock, trip.durationLabel, 'bg-sage'],
+                  [IndianRupee, trip.priceInr != null ? `${formatINR(trip.priceInr)} per person` : 'Price TBA', 'bg-sun'],
+                  ...(trip.altitudeM ? [[Mountain, `${trip.altitudeM.toLocaleString('en-IN')} m`, 'bg-peach']] : []),
+                ].map(([Icon, label, bg]) => {
+                  const I = Icon as typeof Clock;
+                  return <li key={label as string} className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1.5', bg as string)}><I size={15} aria-hidden /> {label as string}</li>;
+                })}
+              </ul>
+              <div className="flex flex-wrap items-center gap-4">
+                {bookable ? <ButtonLink to={`/trips/${trip.slug}/book`} size="lg">Book now</ButtonLink> : <ButtonA href={waLink(s.whatsappNumber, tripEnquiryMessage(trip))} size="lg"><MessageCircle size={18} /> Ask on WhatsApp</ButtonA>}
+                {trip.status !== 'departed' && <Countdown trip={trip} />}
+              </div>
             </div>
-            <h1 className="max-w-4xl font-display text-[clamp(2rem,9vw,7.4rem)] font-extrabold uppercase leading-[0.88] tracking-[-0.02em] [overflow-wrap:anywhere]">{trip.destination}</h1>
-            <p className="max-w-2xl text-lg text-cream/90 md:text-xl">{trip.summary}</p>
-            <ul className="flex flex-wrap gap-2 text-sm">
-              {[
-                [CalendarDays, formatDateLong(trip.departureDate)],
-                [Clock, trip.durationLabel],
-                [IndianRupee, trip.priceInr != null ? `${formatINR(trip.priceInr)} per person` : 'Price TBA'],
-                ...(trip.altitudeM ? [[Mountain, `${trip.altitudeM.toLocaleString('en-IN')} m`]] : []),
-              ].map(([Icon, label]) => {
-                const I = Icon as typeof Clock;
-                return <li key={label as string} className="inline-flex items-center gap-1.5 rounded-full bg-cream/12 px-3 py-1.5 ring-1 ring-cream/25 backdrop-blur-sm"><I size={15} aria-hidden /> {label as string}</li>;
-              })}
-            </ul>
-            <div className="flex flex-wrap items-center gap-4">
-              {bookable ? <ButtonLink to={`/trips/${trip.slug}/book`} size="lg">Book now</ButtonLink> : <ButtonA href={waLink(s.whatsappNumber, tripEnquiryMessage(trip))} size="lg"><MessageCircle size={18} /> Ask on WhatsApp</ButtonA>}
-              {trip.status !== 'departed' && <Countdown trip={trip} light />}
+            <div className="relative mx-auto h-[20rem] w-full max-w-md sm:h-[26rem]">
+              <div className="absolute right-0 top-0 w-[52%]"><Polaroid src={trip.coverImage.url} alt={trip.coverImage.alt} caption={trip.destination} rotate={6} eager /></div>
+              {gallery[0] && gallery[0].url !== trip.coverImage.url && (
+                <div className="absolute left-0 top-[22%] w-[50%]"><Polaroid src={gallery[0].url} alt={gallery[0].alt} caption={trip.altitudeM ? `${trip.altitudeM.toLocaleString('en-IN')} m up` : trip.title} rotate={-5} eager /></div>
+              )}
+              {trip.departureDate && (
+                <div className="absolute bottom-0 right-[12%]">
+                  <PostageStamp tone="orange" rotate={8}>
+                    <span className="text-[0.65rem] font-bold uppercase tracking-wider">{monthShort(trip.departureDate)} {trip.departureDate.slice(0, 4)}</span>
+                    <span className="font-display text-3xl font-extrabold leading-none tabular">{dayOfMonth(trip.departureDate)}</span>
+                  </PostageStamp>
+                </div>
+              )}
             </div>
           </div>
         </div>
+        <Wave from="bg-sky" to="text-cream" />
       </section>
 
       {/* Section nav */}
-      <nav aria-label="On this page" className="sticky top-[calc(4.5rem+env(safe-area-inset-top,0px))] z-30 border-b border-line bg-paper/95 backdrop-blur-sm">
+      <nav aria-label="On this page" className="sticky top-[calc(4.5rem+env(safe-area-inset-top,0px))] z-30 border-b border-line bg-cream/95 backdrop-blur-sm">
         <div className="gutter">
           <ul className="shell flex gap-1 overflow-x-auto py-2 scrollbar-none">
             {SECTIONS.map(([id, label]) => (
-              <li key={id}><a href={`#${id}`} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }} className="block whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-semibold text-muted hover:bg-ink/5 hover:text-ink">{label}</a></li>
+              <li key={id}><a href={`#${id}`} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }} className="block whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-bold text-muted hover:bg-sky hover:text-forest">{label}</a></li>
             ))}
           </ul>
         </div>
@@ -323,6 +339,7 @@ export default function TripDetail() {
         </div>
       </div>
 
+      <div className="h-16 lg:hidden" aria-hidden />
       {/* Mobile sticky booking bar */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-cream/95 backdrop-blur-sm lg:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="gutter flex items-center justify-between gap-3 py-2.5">
