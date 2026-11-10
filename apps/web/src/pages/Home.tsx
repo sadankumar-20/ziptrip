@@ -122,7 +122,7 @@ function Upcoming() {
           {isLoading && <div className="mt-10 grid gap-5 md:grid-cols-3"><Skeleton className="h-96 md:col-span-3" /><Skeleton className="h-96" /><Skeleton className="h-96" /><Skeleton className="h-96" /></div>}
           {isError && <ErrorState className="mt-10" onRetry={() => refetch()} />}
           {featured && <div className="mt-10"><FeaturedTrip trip={featured} /></div>}
-          {trips && (
+          {trips && upcoming.length > 1 && (
             <>
               <div className="mt-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 scrollbar-none" role="group" aria-label="Filter trips">
