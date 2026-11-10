@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/*
+  JoinZipTrip design tokens.
+  Layout idea: trail-permit and ticket shapes for anything you book; full-bleed scenery for anything you dream about;
+  forest-green bands with topographic contours for the "why us" story. Orange is reserved for actions.
+*/
+@theme {
+  --color-forest: #103D2B;
+  --color-forest-deep: #0A2A1D;
+  --color-forest-soft: #1D5740;
+  --color-sage: #DDE6D5;
+  --color-orange: #F46A27;
+  --color-orange-deep: #DD5718;
+  --color-ember: #B0440E;
+  --color-cream: #FFF8E9;
+  --color-sand: #F3E8CC;
+  --color-paper: #FAFAF6;
+  --color-ink: #17221C;
+  --color-muted: #56645B;
+  --color-line: #E5DFCF;
+
+  --font-display: "Eczar", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-sans: "Anek Latin", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  --radius-ticket: 1.1rem;
+  --ease-trail: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  :root { color-scheme: light; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 { text-wrap: balance; line-height: 1.08; }
+  p { text-wrap: pretty; }
+  ::selection { background: var(--color-orange); color: var(--color-ink); }
+  :focus-visible { outline: 3px solid var(--color-orange); outline-offset: 3px; border-radius: 6px; }
+  button, [role='button'] { cursor: pointer; }
+  img { max-width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+@utility gutter {
+  padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  @media (width >= 48rem) {
+    padding-left: max(2rem, env(safe-area-inset-left, 0px));
+    padding-right: max(2rem, env(safe-area-inset-right, 0px));
+  }
+}
+@utility shell { width: 100%; max-width: 78rem; margin-inline: auto; }
+@utility font-cond { font-stretch: 80%; }
+@utility font-wide { font-stretch: 112%; }
+@utility tabular { font-variant-numeric: tabular-nums; }
+
+/* Ticket perforation: semicircle notches cut into the left/right edges at a given height. */
+@utility ticket-notch {
+  --notch: 14px;
+  --notch-at: 50%;
+  -webkit-mask:
+    radial-gradient(circle var(--notch) at 0 var(--notch-at), #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle var(--notch) at 100% var(--notch-at), #0000 98%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle var(--notch) at 0 var(--notch-at), #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle var(--notch) at 100% var(--notch-at), #0000 98%, #000) right / 51% 100% no-repeat;
+}
+
+@utility perforation-y {
+  background-image: radial-gradient(circle, currentColor 1.5px, transparent 2px);
+  background-size: 2px 10px;
+  background-repeat: repeat-y;
+  background-position: center;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@keyframes scroll-cue { 0% { transform: translateY(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.animate-scroll-cue { animation: scroll-cue 1.8s var(--ease-trail) infinite; }
+.animate-pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+
+/* Body copy written by admins keeps its paragraphs. */
+.prose-trip p + p { margin-top: 1em; }

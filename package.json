@@ -1,0 +1,17 @@
+{
+  "name": "joinziptrip",
+  "private": true,
+  "version": "1.0.0",
+  "description": "JoinZipTrip — adventure & group travel booking platform (web + api + database)",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "dev": "npm run dev --workspace apps/api & npm run dev --workspace apps/web",
+    "dev:web": "npm run dev --workspace apps/web",
+    "dev:api": "npm run dev --workspace apps/api",
+    "build": "npm run build --workspace apps/web && npm run build --workspace apps/api",
+    "build:preview": "npm run build:preview --workspace apps/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm test --workspace apps/api"
+  },
+  "engines": { "node": ">=20" }
+}

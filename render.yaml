@@ -1,0 +1,27 @@
+# One-click API deploy on Render (render.com → New → Blueprint). Fill the secret values in the dashboard.
+services:
+  - type: web
+    name: joinziptrip-api
+    runtime: node
+    plan: starter
+    rootDir: .
+    buildCommand: npm ci && npm run build --workspace apps/api
+    startCommand: npm start --workspace apps/api
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: WEB_ORIGIN
+        value: https://joinziptrip.com
+      - key: STORAGE_DRIVER
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: PAYMENTS_ENABLED
+        value: "false"
